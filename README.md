@@ -2,6 +2,8 @@
 
 An agent workflow that produces a short, family-friendly **3D Pixar-style English story film** entirely inside the VideoExpress web editor. You give it an idea; it delivers an exported MP4 with two recurring characters who move, act and speak simple English in every shot.
 
+**Demos:** [sample videos made with this workflow (Google Drive)](https://drive.google.com/drive/folders/1RPgzb6Jhv9ycTm_RgKsJ6qW_WWUCErSc?usp=sharing)
+
 This folder contains only two files:
 
 | File | Purpose |
