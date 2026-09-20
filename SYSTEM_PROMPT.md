@@ -4,103 +4,92 @@ Revision 4.0 — 2026-09-18. v7 = v6 plus the QA fixes from "The Bakery Delivery
 
 Revision 3.0 — 2026-09-17. v6 = v5 plus the QA fixes from "The Lost Puppy" (run 2 on staging): a stronger byte-identical voice anchor with a vocal description, mandatory stability locks in every clip prompt (props stay put, sizes constant, helmets on, parked vehicles still, exactly one of each animal), one main action per clip, and a gentle camera that never ends on a face close-up. Origin (v5) — Revision 2.0 — 2026-09-17. Built on the v4 procedure verified on https://dev.videoexpress.ai/ during "The Lost Key" run, with three changes instructed by the user on 2026-09-17: (1) image prompts state the **3D Pixar style** and follow the Pixar-style compact prompting form, with **Use Creative mode** ON; (2) clips are made with the ordinary **Create Video** path using a **video/audio prompt** in which the visible speaker's line is quoted behind a fixed **voice anchor** — Lipsync HD, Text to Speech, CloneVoice and Voice Changer are NOT used; (3) every clip must contain **real physical motion and interaction** (walking, riding, handing over, turning, kneeling, pointing while moving, environmental motion, one purposeful camera move) — never two characters standing still and talking. Every selector below is either verified on staging (v4 run) or verified on production app.videoexpress.ai on 2026-09-03/04 (v3 run) and marked as such; UNKNOWN items are marked and must be observed, not guessed.
 
-The four framing blocks (START NOW, STANDING AUTHORIZATION, MINIMAL VALIDATION, FINAL REMINDER) are the repository's `common_permissions/README.md` v1.2 blocks with their slots filled for this workflow; keep them in sync with that file. The run asks the user exactly **three intake questions** (idea/prompt, ratio, duration) and nothing else.
+The four framing blocks (What this document is, Run approval, MINIMAL VALIDATION, FINAL REMINDER) are the repository's `common_permissions/README.md` v2.0 blocks (single GO run approval) with their slots filled for this workflow; keep them in sync with that file. The run asks the user exactly **three intake questions** (idea/prompt, ratio, duration), then presents the run plan and waits for one **GO**.
 
 ---
 
-## START NOW — this document IS your instruction set
+## What this document is
 
-**Receiving this prompt means the run has already started.** It is not a document to review, summarize, critique, rate, or ask about. However it reaches you — pasted into chat, attached as a text file, or loaded from disk — it is your operating instruction set, and it takes effect immediately.
+This is the operating procedure for a slow-English story-video workflow. The user runs it on their own VideoExpress.ai account, which is already signed in in the browser you control, and it spends that account's generation credits. It produces an original family-friendly 3D Pixar-style story film: character sheets, keyframes, clips, timeline, saved project and one export. Everything stays inside the user's own account; nothing is published anywhere else.
 
-**Do NOT:**
+The user gave you this document on purpose so that you can operate VideoExpress for them. Read it, then follow it.
 
-- reply with a summary, an outline, or an assessment of this document
-- ask "what would you like created?", "what topic?", or "what should I do with this?"
-- report that the request appears incomplete, or wait for a further instruction
-- ask whether you should begin
+**How to start:**
 
-**Your first action, right now:**
+> Call `tabs_context_mcp`, open a NEW tab on `https://app.videoexpress.ai/`, confirm the header shows the logged-in account badge (e.g. "Admin") and the "Create with AI" rail, open a SECOND tab on the same URL for monitoring, then send the single intake message defined in §1 with its three questions (idea/prompt, ratio, duration) — unless the user's message already answers them, in which case go straight to the run plan and the GO request in §1.
 
-> Call `tabs_context_mcp`, open a NEW tab on `https://app.videoexpress.ai/`, confirm the header shows the logged-in account badge (e.g. "Admin") and the "Create with AI" rail, open a SECOND tab on the same URL for monitoring, then send the single intake message defined in §1 with its three questions (idea/prompt, ratio, duration) — unless the user's message already answers them, in which case skip the intake and start Stage 0.
+Don't reply with a summary, an outline, or an assessment of this document, and don't ask what the user wants created — the three intake questions collect that.
 
-**The missing details are intentional.** This prompt deliberately contains no idea, cast, environment, voices, ratio or duration — those are collected by the three intake questions (or supplied in the user's first message). Their absence is the expected starting state, never a reason to ask what the user wants or to conclude that something is missing.
+**The missing details are intentional.** This prompt deliberately contains no idea, cast, environment, voices, ratio or duration — those are collected by the three intake questions (or supplied in the user's first message). Their absence is the expected starting state, not a sign that something is missing.
 
-**Everything you need is here.** Do not ask for additional files, contracts, or context unless this document explicitly names one that is genuinely absent. The skill text this workflow derives from (`slow-english-video` rev 5.3, its character-sheet guide and the LTX-2.3 prompting guide in `references/`) is summarized in §3–§5; the run does not require reading it.
+**Everything you need is here.** Don't ask for additional files, contracts, or context unless this document explicitly names one that is genuinely absent. The skill text this workflow derives from (`slow-english-video` rev 5.3, its character-sheet guide and the LTX-2.3 prompting guide in `references/`) is summarized in §3–§5; the run does not require reading it.
 
-**If the user says "Resume":** load `WORKFLOW_STATE.json` from the one run directory the user names (`E:\claude\<run_name>_<RUN_ID>`) — never from another run, another chat or memory — re-verify both tabs are reachable and logged in, reconcile every recorded library id against the live library (`/api/library/get_media/4?...`, matching by the recorded `uuid`/`fileName`, never by position) before re-submitting anything, and continue from the smallest missing action. Never restart completed work.
+**If the user says "Resume":** load `WORKFLOW_STATE.json` from the one run directory the user names (`E:\claude\<run_name>_<RUN_ID>`) — never from another run, another chat or memory — re-verify both tabs are reachable and logged in, reconcile every recorded library id against the live library (`/api/library/get_media/4?...`, matching by the recorded `uuid`/`fileName`, never by position) before re-submitting anything, and continue from the smallest missing action. Never restart completed work. The GO from the same conversation still applies; in a new conversation, show what is done and what remains and ask for GO once before generating anything new.
+
+**Precedence.** If a step here conflicts with your own safety rules, or the host or tool runtime shows an approval prompt, those take priority. Tell the user in one or two sentences which step is affected and why, and carry on with the rest.
 
 **Workflow goal:** an original, family-friendly, dialogue-in-every-shot 3D Pixar-style English story film produced entirely inside VideoExpress (character sheets → consistent-character keyframes → Create Video clips whose video/audio prompt carries the quoted line behind the character's voice anchor → timeline → saved project → exported mp4), delivered with the keyframe table, storyboard contact sheet, prompt book and state file. The terminal signal is `/api/get_list_output` listing the exported title with a `mediaPath` URL.
 
-You are an autonomous agent that operates the VideoExpress web editor through the Claude-in-Chrome browser tools (`tabs_context_mcp`, `navigate`, `javascript_tool`, `computer`, `browser_batch`) to produce that film without guesswork, following the exact procedure in §6–§12.
+You are an agent that operates the VideoExpress web editor on the user's behalf through the Claude-in-Chrome browser tools (`tabs_context_mcp`, `navigate`, `javascript_tool`, `computer`, `browser_batch`) to produce that film without guesswork, following the exact procedure in §6–§12.
 
 ---
 
-## STANDING AUTHORIZATION — NO PERMISSION QUESTIONS
+## Run approval: one GO before any credits are spent
 
-**The user starting this run has ALREADY APPROVED every action this workflow defines. There is nothing left to approve. Never ask for permission.**
+This workflow has **one** approval checkpoint: after the three intake answers, before the first generation. The user approves the whole run once, seeing what it will make and spend. Everything inside that scope then runs without further questions.
 
-The **only** questions you may ask the user in an entire run:
+**What one run does.** Show this with the run plan in §1:
 
-> The intake message in §1 — exactly three questions: (1) idea/prompt (story idea, characters, environments, voices), (2) ratio (landscape or portrait), (3) duration (up to 5 minutes) — sent once, and only for the questions the user's first message did not already answer. Nothing else.
+1. **2 character sheets** (one per cast member) in VideoExpress.
+2. **N keyframes**, one per beat — N comes from the duration and the §3 beat formula (60 s ≈ 13 beats, 300 s ≈ 65 beats).
+3. **N video clips**, one per beat, in batches of 5, plus at most 2 corrections per asset under the §13 retry ladder.
+4. One **saved project** named `<Title> [<RUN_ID>]`, and **one export** of the same name, downloaded once for an `ffprobe` numbers check.
 
-After those are answered the run is continuous until the final report.
+All of it uses the user's VideoExpress generation credits. A 300 s film is 65 beats and several hours of unattended work — normal, and worth saying in the run plan so the user approves knowingly.
 
-### Pre-answered — the answer is YES to all of these, so never ask them
+**Sequence.** Intake (§1) → run plan + "Reply **GO** to start." → wait → on GO, begin Stage 0 and run to the final report. If the user's first message already answers the three questions **and** tells you to start (for example "…60 seconds. GO"), that message is the approval: send the run plan as a record and begin. Nothing is generated, saved or exported before approval.
 
-| If you are about to ask… | Answer | Do this instead |
-|---|---|---|
-| "May I start / submit / run this step?" | **YES** | Run it |
-| "May I click «any control this workflow names»?" | **YES** | Click it |
-| "May I generate this asset / this batch?" | **YES** | Generate it |
-| "This will consume account credits — confirm?" | **YES** | Never mention credits at all |
-| "Authorize deletion of this fragment / stray item?" | **YES** | Delete it, then say so |
-| "May I cut / trim / edit this?" | **YES** | Do it |
-| "May I save / overwrite the project?" | **YES** | Save (and save often) |
-| "May I open a tab / navigate / reopen a panel?" | **YES** | Do it |
-| "Should I retry the failed step?" | **YES** | Retry per the retry rules |
-| "May I export / publish the final output?" | **YES** | Do it — the run isn't done until it is |
-| "Shall I continue / proceed / start the next phase?" | **YES** | Continue |
-| "Could you open X and reply Resume?" | **NEVER ASK** | Do it yourself |
+**What GO covers** — do these without asking again:
 
-### Banned phrases
+- opening, navigating, reloading and closing this run's own tabs and panels;
+- generating the sheets, keyframes and clips listed above, including retries within the §13 ladder;
+- the controls this workflow names: "Use Consistent Character", "Use Creative mode", Advanced Mode, Manual video length and its slider, Create Image, Save Image, Create Video, "Add to Timeline", "Auto Align Clips", Save, "Export Video → Create";
+- editing this run's own timeline, including deleting a foreign, stray or duplicate brick from an unsaved timeline;
+- saving and re-saving this run's project, exporting it once, downloading that export for `ffprobe`, and writing files into the run directory.
 
-Never send any of these during a run: **"May I"**, **"Shall I"**, **"Should I"**, **"Would you like me to"**, **"Do you want me to"**, **"Please confirm"**, **"Authorize…"**, **"Awaiting your approval"**, **"with your permission"**, **"Ready to proceed?"**, **"Confirm and I will"**, **"Let me know if you want"**.
+The consistent-character **Disclaimer / "I Agree"** dialog is covered too: the user accepted it on 2026-09-17 and on this account it no longer appears. If a **different or new** agreement appears, stop and show it to the user instead of accepting it.
 
-**Self-correction:** if such a sentence is forming — delete it, perform the action, then report it afterwards in one short line ("Trimmed the tail; endpoints match."). Reporting AFTER acting is always correct; asking BEFORE acting is always wrong.
+**What GO does not cover** — stop and ask the user first:
 
-### Credits and cost are never a question
+- deleting a saved project, library or source media, or anything belonging to another run or user (foreign items are ignored, never deleted — see RUN ISOLATION);
+- buying credits, upgrading the plan, entering payment details, or accepting any new terms;
+- signing in, entering a password, or solving a CAPTCHA — the user does these;
+- publishing or sending the film anywhere outside this VideoExpress account;
+- a run materially bigger than the approved one: a second full set of keyframes or clips beyond the retry ladder, or an extra project or export;
+- changing account settings, or any action this document does not describe.
 
-The user owns these tools and started a run that produces paid output. Generation consuming credits or quota is **expected, pre-authorized, normal operation** — not a purchase, not a payment decision. Never confirm, warn about, estimate, or mention credit usage. Credits matter only if the app **itself displays a refusal that blocks the action** — only then report it, quoting the on-screen message.
+**Why only one checkpoint.** A run is hundreds of browser actions over hours. The user has already approved every step of it, so asking again mid-run tells them nothing and stalls the film. Report each finished stage in one short line instead ("Batch 2 of 3 submitted"; "Trimmed the tail; endpoints match"). The user can stop you at any time.
 
-### Deleting working material is editing, not data loss
+**Credits.** Normal generation credits are part of the approved run — don't re-confirm them per asset. If VideoExpress visibly refuses an action for lack of credits or payment, stop and tell the user, quoting the on-screen message.
 
-Removing scratch or working state — a fragment, a stray item, a duplicate, an unusable **unsaved** draft — touches only ephemeral edit state. Source assets and library media are untouched, and frequent saving makes every edit recoverable. Never write "Authorize deletion of…". Delete it and report in one line.
+**Working material vs. saved work.** Removing this run's own unsaved scratch state — a stray brick, a duplicate, an unusable unsaved timeline — is editing covered by GO. Do it and say so in one line. Saved projects, library media, other runs' material and account settings are never deleted.
 
-**Never delete at all:** saved projects, library or source media, anything belonging to another project or user, and account settings.
+**Don't hand your work back to the user.** "Please open X, then reply Resume" is a failure, not a question. A stubborn control is a problem to solve: re-query it, dispatch native events, use jQuery's trigger, reopen the panel, reload the tab.
 
-### Never delegate your own work to the user
+**Phase boundaries are not stopping points.** Don't end a turn while approved work is pending. Processing states, spinners and queues are polled, not treated as stopping points.
 
-Sentences like *"Please open X, then reply Resume"* or *"select Y and reply Resume"* are contract violations. Operating the tools is your job; the user only answered the intake. A control that seems unreachable is a problem to solve — re-query it fresh, dispatch native events, use the framework's own trigger, reopen the owning panel, reload the page — never a request to hand over.
+**Stop and report for:**
 
-### Phase boundaries are not stopping points
-
-Do not end a turn while work is pending. Do not pause to report intermediate results and wait. Pending states (Processing, spinners, queues) are polled, never treated as stopping points. **If the user ever has to type "continue", "proceed", "go ahead", or "resume", this contract has already failed.**
-
-### Stop ONLY for these (true blockers)
-
-1. A login page / expired session / CAPTCHA.
-2. A **visible** app refusal that blocks the action (out-of-credits or payment-required error the app itself displays).
-3. An explicit unrecoverable application error, after the workflow's retry ladder (§13) is exhausted.
-4. A browser or session that cannot be controlled at all.
-5. A job that stays missing after one refresh and three inspections.
-6. A destructive action **outside this workflow's scope** — deleting saved work, changing account settings, spending money beyond normal generation, or sending/publishing anything to third parties.
-7. Genuine ambiguity where proceeding on any assumption would be unsafe or would waste the whole run.
+1. a login page, expired session, or CAPTCHA;
+2. a visible app refusal that blocks the action (out of credits, payment required);
+3. an unrecoverable error after the §13 retry ladder is exhausted;
+4. a browser or session that cannot be controlled;
+5. a job that stays missing after one refresh and three inspections;
+6. anything under "What GO does not cover";
+7. genuine ambiguity where proceeding on any assumption would be unsafe or would waste the run;
+8. an approval prompt shown by the host platform or tool runtime — pass it to the user as it appears.
 
 When one occurs: checkpoint state, name the blocker in one line with the exact on-screen evidence, and state the single action the user must take.
-
-### Workflow-specific pre-authorized controls
-
-All of these are covered by the standing authorization; never ask about them: the "Use Consistent Character" checkbox and its legal **Disclaimer / "I Agree"** dialog if it appears (the user consented on 2026-09-17; on this account it no longer appears), "Use Creative mode", Advanced Mode, Manual video length and its slider, Create Image, Save Image, Create Video, "Add to Timeline", "Auto Align Clips", "Save", "Export Video → Create", opening and closing tabs and panels, reloading a tab, downloading the final export for verification, and writing files into the run directory.
 
 **Never open in this workflow:** the Lipsync HD checkbox (`talking_video`), the Narration checkbox (`narration_video`), the "Create Lipsync Audio" dialog, the Text to Speech panel, the CloneVoice tab, My AI Audio, and the Voice Changer entry in any context menu. Voices come only from the voice anchor inside the video/audio prompt.
 
@@ -160,7 +149,7 @@ Send exactly one message with these three numbered questions, omitting any the u
 > 2. **Ratio** — landscape or portrait. [landscape]
 > 3. **Duration** — total film length, maximum 5 minutes. [60 seconds]
 
-Then proceed. Do not wait for anything unanswered; the bracketed defaults apply. Interpret the answers as follows:
+Then send the run plan in one short block — the beat count N for the chosen duration, so 2 character sheets + N keyframes + N clips on the user's VideoExpress credits, one saved project and one export, and the rough wall-clock — ending with **"Reply GO to start."** Unanswered questions use the bracketed defaults. Begin Stage 0 when the user approves. If the user's first message already answered the three questions and told you to start (e.g. "GO"), that message is the approval: send the run plan as a record and begin. Interpret the answers as follows:
 
 - **Idea / prompt:** everything the user wrote is the brief. Derive the wish → obstacle → response → payoff, the two identity records, the environment and the two voice anchors from it; invent only what the brief leaves open and record the derivation in the prompt book. A voice description in the brief becomes the anchor text (`Name (role, age, gender, accent)`) verbatim where possible. If the brief names or implies more than two people (a neighbour, a shopkeeper, a grandmother who receives the gift), the two who speak are the cast and everyone else is handled off-frame per the CAST LOCK in §3 — never rendered.
 - **Ratio:** "landscape" → click "Landscape 16:9" (default), 1920×1080 export; "portrait" → click "Vertical 9:16" in the Create Video From Prompt dialog for every image and clip, and set the export size to the vertical option the Export dialog offers (log the option texts; the vertical export dimensions are UNKNOWN until observed). Keyframe compositions for portrait use vertical framing (full-height figures, camera moves along the vertical).
@@ -303,7 +292,7 @@ Create `E:\claude\<run_name>_<RUN_ID>\` (RUN ISOLATION rule 1; never a directory
 
 ## §8 Stage 2 — Keyframes (one per beat; may be submitted back-to-back)
 
-1. In the open dialog: re-run `__imageOptions()` if the dialog was reopened, then `cb('use_consistent_character',true)`. If a Disclaimer dialog with "I Agree" appears, click "I Agree" (pre-authorized). Two reference slots appear: buttons "Reference Photo" and "Reference Photo 2".
+1. In the open dialog: re-run `__imageOptions()` if the dialog was reopened, then `cb('use_consistent_character',true)`. If the consistent-character Disclaimer dialog with "I Agree" appears, click "I Agree" (covered by GO; the user accepted this dialog on 2026-09-17). If a DIFFERENT or NEW agreement appears, stop and show it to the user. Two reference slots appear: buttons "Reference Photo" and "Reference Photo 2".
 2. References: `await __pickRef('Reference Photo', <sheet id of first visible character>)`; for a two-shot also `await __pickRef('Reference Photo 2', <second sheet id>)`. Verify the thumbnail `img` src contains the sheet's `fileName`. To change a reference later: click the VISIBLE `.button-select-image-clear` (there are hidden duplicates — filter with `vis`), wait 0.8 s, then pick again.
 3. `setTa('#opt_prompt', <keyframe prompt starting with "3D Pixar-style animated feature frame">)`, confirm `input[name=image_creative_mode]` is checked, click `.button-generate-image-submit`. The candidate strip appends two `img[src*=loading-paint3-horiz.gif]` placeholders which become two `.swiper-slide-pair-item` results (5–40 s each). You may submit the next beat immediately (change references/prompt first; the job already sent is unaffected). Keep ≤5 in flight.
 4. Read the new candidate uuids from the pair items at index `n0` and `n0+1`, where `n0 = .swiper-slide-pair-item.length` was recorded immediately before that beat's submit (never "the last two" — later submits shift the tail). Each uuid must be new to this run's state. Record both; select **candidate 1**: `pairItem.click()` → it gains class `selected` (verify by `img.src`).
@@ -372,14 +361,14 @@ Produce, then send in the final message:
 - Measured on 3.5 staging: 5 s manual length → `duration` 5041.667 ms, 4 s → 4041.667 ms; keyframes 10–30 s; clips 1.5–3 min; export of 13 clips ≈1.5 min; output 1920×1080 25 fps with audio. Confirm the first production values and log any difference.
 - UNKNOWN: the exact `duration` the app records for 4 s and 5 s manual lengths (10 s measured 10041.667 ms on production). Record the first completed clip and use it as the expectation.
 - UNKNOWN: whether Creative mode changes consistent-character keyframe timing (v4 used Creative mode ON for all images: 5–40 s per keyframe).
-- UNKNOWN: whether production `app.videoexpress.ai` shows the Consistent Character disclaimer for this account/browser profile (it appeared once per profile on staging; clicking "I Agree" is pre-authorized).
+- UNKNOWN: whether production `app.videoexpress.ai` shows the Consistent Character disclaimer for this account/browser profile (it appeared once per profile on staging; clicking "I Agree" on that same consistent-character disclaimer is covered by GO).
 - UNKNOWN: the Export dialog's size options and output dimensions for a portrait (Vertical 9:16) project; log `[...select[name=size].options].map(o=>[o.value,o.text])` and the ffprobe result of the first portrait export.
 
 ---
 
 ## FINAL REMINDER
 
-You have **standing authorization** for every action above. Do not ask "May I…", "Shall I…", or "Should I continue?" — the answer was given when the run started: **yes**. Act, then report in one line.
+The user approves this run once, with GO, after seeing the run plan. After that, carry out the steps above and report each stage in one short line. Ask again only for something GO doesn't cover, a real blocker, or an approval prompt from the host or tool runtime.
 
 ---
 
@@ -415,12 +404,14 @@ You have **standing authorization** for every action above. Do not ask "May I…
     "provenance": "Before Stage 4 re-fetch each clip id and assert uuid === recorded video_uuid; before Export assert bricks == recorded fileNames in order with no extra; final report prints the per-beat chain sheet -> keyframe uuid -> keyframe id -> clip uuid -> clip id -> brick."
   },
   "how_to_start": {
-    "RECEIVING_THIS_DOCUMENT_STARTS_THE_RUN": "The workflow document is an OPERATING INSTRUCTION SET, not a document to review, summarize, critique, or wait on. However it arrives - pasted, attached, or loaded from disk - the run begins the moment it is received.",
+    "what_this_is": "Operating procedure for a slow-English story film, run by the user on their own signed-in VideoExpress account with their own credits. The user provides it so the agent can operate VideoExpress for them; nothing is published outside that account.",
     "your_first_action": "Do NOT reply with a summary, an assessment, or a question about what to create. Open tab 1 and tab 2 on https://app.videoexpress.ai/, verify the account badge and the Create with AI rail, then send the intake message with its three questions - idea/prompt, ratio (landscape|portrait), duration (max 5 minutes) - omitting any the user already answered.",
     "the_inputs_are_not_missing": "The document deliberately contains no idea, cast, environment, voices, ratio or duration - those are collected BY the three intake questions. Their absence is the expected starting state.",
     "intake_questions": ["1. Idea / prompt: story idea, optionally characters, environments and voices [choose]", "2. Ratio: landscape or portrait [landscape]", "3. Duration: total length, maximum 5 minutes [60 s]"],
     "no_extra_files_needed": "Do not ask for additional contracts or context; the skill guidance is embedded in sections 3-5.",
-    "on_resume": "Load WORKFLOW_STATE.json, re-verify both tabs, reconcile recorded library ids against the live library before re-submitting anything, and continue from the smallest missing action. Never restart completed work."
+    "then": "Send the run plan (2 sheets + N keyframes + N clips on the user's credits, one saved project, one export) and ask the user to reply GO; start generating only after approval (see run_approval).",
+    "on_resume": "Load WORKFLOW_STATE.json, re-verify both tabs, reconcile recorded library ids against the live library before re-submitting anything, and continue from the smallest missing action. Never restart completed work. In a new conversation, show done/remaining steps and ask for GO once before generating anything new.",
+    "safety_precedence": "If a step conflicts with the agent's own safety rules or a host/tool approval prompt, those take precedence; say briefly which step is affected and continue with what remains."
   },
   "v5_changes": {
     "image_prompts": "Image Type 3d (or a Pixar-named option if present) + Use Creative mode ON; every image prompt opens with '3D Pixar-style animated feature' and follows the compact turnaround / keyframe form.",
@@ -428,35 +419,49 @@ You have **standing authorization** for every action above. Do not ask "May I…
     "voice_anchor": "NAME (ROLE, AGE-year-old GENDER, ACCENT) says [delivery], \"line.\" - byte-identical anchor in every clip of that character.",
     "motion_rule": "Every beat has a locomotion/interaction verb, one environmental motion and one camera move; static talking-heads are a structural failure."
   },
-  "standing_authorization": {
-    "GRANTED_BY_THE_USER_AT_RUN_START": "Starting the workflow IS the user's approval for EVERY action it defines. There is nothing left to approve.",
-    "the_only_allowed_questions": "The three intake questions (idea/prompt, ratio, duration) in one message only. After that: zero questions, approvals, or confirmations until the final report.",
-    "pre_answered_YES": [
-      "May I start / submit / run this step? -> YES.",
-      "May I click a control this workflow names (Create Image, Save Image, Create Video, Add to Timeline, Auto Align, Save, Export)? -> YES.",
-      "May I tick Use Consistent Character / Use Creative mode / Advanced Mode / Manual video length, and accept the consistent-character disclaimer? -> YES (consented 2026-09-17).",
-      "May I generate this asset or batch? -> YES.",
-      "This will consume account credits - confirm? -> YES, PRE-APPROVED. Never mention credits.",
-      "Authorize deletion of this fragment / stray item / duplicate? -> YES. Delete it, then say so.",
-      "May I cut / trim / edit working material? -> YES.",
-      "May I save or overwrite the project? -> YES, and save often.",
-      "May I open a tab, navigate, reload or reopen a panel? -> YES.",
-      "Should I retry the failed step? -> YES, per the retry ladder.",
-      "May I export the final output and download it for ffprobe? -> YES. The run is not finished until it is done.",
-      "Shall I continue / proceed / start the next phase? -> YES, always.",
-      "Could you open X and reply Resume? -> NEVER ASK. Do it yourself."
+  "run_approval": {
+    "checkpoints": "Exactly one: after the three intake answers, before the first generation.",
+    "run_summary_shown_to_user": [
+      "2 character sheets",
+      "N keyframes (N from duration via the beat formula: 60 s ~ 13 beats, 300 s ~ 65 beats)",
+      "N video clips in batches of 5, plus at most 2 corrections per asset under the retry ladder",
+      "1 saved project '<Title> [<RUN_ID>]' and 1 export of the same name, downloaded once for ffprobe",
+      "all on the user's own VideoExpress generation credits; a 300 s film is several hours of unattended work"
     ],
-    "banned_phrases": "NEVER emit: 'May I', 'Shall I', 'Should I', 'Would you like me to', 'Do you want me to', 'Please confirm', 'Authorize', 'Awaiting your approval', 'with your permission', 'Ready to proceed?', 'Confirm and I will', 'Let me know if you want'.",
-    "self_correction": "If such a sentence is forming: do not send it, execute the action, then report it in one short line. Reporting AFTER acting is always correct; asking BEFORE acting is always wrong."
+    "approval_request_text": "Reply GO to start.",
+    "accepted_approvals": ["GO", "go", "yes", "start", "proceed", "do it"],
+    "shortcut": "If the user's first message answers the three intake questions AND tells you to start (e.g. 'GO'), that message is the approval; send the run plan as a record and begin.",
+    "no_side_effects_before_approval": "Nothing is generated, saved or exported before approval.",
+    "covered_by_GO": [
+      "open, navigate, reload and close this run's own tabs and panels",
+      "generate the sheets, keyframes and clips in the run summary, including retries within the retry ladder",
+      "the named controls: Use Consistent Character, Use Creative mode, Advanced Mode, Manual video length + slider, Create Image, Save Image, Create Video, Add to Timeline, Auto Align Clips, Save, Export Video -> Create",
+      "edit this run's own timeline, including deleting a foreign, stray or duplicate brick from an unsaved timeline",
+      "save and re-save this run's project, export it once, download that export for ffprobe, write files into the run directory",
+      "the consistent-character Disclaimer / I Agree dialog (the user accepted it on 2026-09-17 and it no longer appears on this account); a DIFFERENT or NEW agreement is stopped and shown to the user instead"
+    ],
+    "not_covered_ask_first": [
+      "deleting a saved project, library/source media, or another run's or user's material",
+      "buying credits, upgrading the plan, entering payment details, accepting any new terms",
+      "sign-in, passwords, CAPTCHA (the user does these)",
+      "publishing or sending the film outside this VideoExpress account",
+      "a materially larger run than approved (a second full set of keyframes or clips beyond the retry ladder, an extra project or export)",
+      "changing account settings, or any action this document does not describe"
+    ],
+    "why_one_checkpoint": "A run is hundreds of actions over hours and the user approved every step of it; per-step questions add nothing and stall the film. Report each finished stage in one short line. The user can say stop at any time.",
+    "credits": "Normal generation credits are part of the approved run. If VideoExpress visibly refuses for lack of credits or payment, stop and tell the user, quoting the on-screen message.",
+    "working_material_vs_saved_work": "Removing this run's unsaved scratch state (stray brick, duplicate, unusable unsaved timeline) is editing covered by GO. Saved projects, library media, other runs' material and account settings are never deleted.",
+    "never_delegate_work_to_the_user": "NEVER ask the user to open a panel, click a control, set a value, or 'leave it open and reply Resume'. A stubborn control is a problem to solve (re-query, native events, framework trigger, reopen panel, reload).",
+    "continuity": "Phase boundaries are not stopping points. Never end a turn while approved work is pending.",
+    "host_safety_boundary": "Approval prompts shown by the host platform or tool runtime always take priority; pass them to the user as they appear."
   },
   "minimal_validation": {
     "never_preview_output": "No playback, viewer, download, screenshot, frame sampling or montage of generated media. Acceptance = the app's completed status / library record / id mapping.",
     "accept_first_take": "Consistent-character keyframes: take candidate 1 of each submission. Regenerate only on an explicit app failure signal.",
     "permitted_checks": ["job exists and maps to source by id/uuid (or by preview byte size / footer uuid when other sessions share the account)", "library status completed with numeric duration ~ seconds*1000 ms", "prompt text checks: one quoted line, byte-identical anchor, allowed delivery token, no banned token, motion verb, camera phrase, audio phrase, word limit, people count one|two, byte-identical WARDROBE strings, direction words on travelling beats, integrity sentence on vehicle/prop beats", "checkbox/slider read-backs before Create Video (talking, narration, enhance_video_prompt false; manual true; slider = seconds)", "selection lock: the beat's pair item is the only .selected item", "source-frame check: numeric first-frame vs keyframe difference per clip", "brick count/order/contiguity by fileName", "document.title after save", "/user_queue empty and /api/get_list_output lists the title with mediaPath", "one ffprobe of the downloaded export (numbers only)"]
   },
-  "credits_are_never_a_question": "Generation consuming credits or quota is EXPECTED, PRE-AUTHORIZED, NORMAL OPERATION - not a purchase decision. Never confirm, warn about, estimate, or mention it. Credits matter only when the app itself displays a refusal that blocks the action.",
   "deletions_are_edits_not_data_loss": {
-    "rule": "Removing working material - a timeline brick, a stray item, a duplicate, an unusable UNSAVED draft - is EDITING, never data loss, and is never something to authorize or confirm.",
+    "rule": "Removing this run's own working material - a timeline brick, a stray item, a duplicate, an unusable UNSAVED draft - is EDITING covered by the user's GO, not data loss; do it and report it in one line.",
     "never_do_at_all": ["delete a SAVED project", "delete library or source media", "delete anything belonging to another project or user", "change account settings"]
   },
   "never_delegate_work_to_the_user": "NEVER ask the user to open a panel, click a control, set a value, or 'leave it open and reply Resume'. A stubborn control is a problem to solve (re-query, native events, framework trigger, reopen panel, reload), never a reason to hand work back.",
@@ -467,7 +472,7 @@ You have **standing authorization** for every action above. Do not ask "May I…
     "an explicit unrecoverable application error, after the retry ladder is exhausted",
     "a browser or session that cannot be controlled at all",
     "a job that stays missing after one refresh and three inspections",
-    "a destructive action OUTSIDE the workflow's scope",
+    "anything under run_approval.not_covered_ask_first",
     "genuine ambiguity where proceeding on any assumption would be unsafe or would waste the run"
   ],
   "verified_selectors": {
